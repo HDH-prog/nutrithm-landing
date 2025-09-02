@@ -749,8 +749,10 @@
                 <h2>건강한 변화를 시작할 준비가 되셨나요?</h2>
                 <p>뉴트리듬 앱 출시 소식을 가장 먼저 받아보세요. 얼리버드 혜택도 놓치지 마세요!</p>
                 
-                <form class="notify-form" onsubmit="submitNotification(event)">
-                    <input type="email" class="email-input" placeholder="이메일 주소를 입력하세요" required>
+                <form class="notify-form" action="https://formspree.io/f/mqaddbpq" method="POST" onsubmit="submitNotification(event)">
+                    <input type="email" name="email" class="email-input" placeholder="이메일 주소를 입력하세요" required>
+                    <input type="hidden" name="_subject" value="뉴트리듬 출시 알림 신청">
+                    <input type="hidden" name="_next" value="">
                     <button type="submit" class="notify-btn">알림 받기</button>
                 </form>
                 
@@ -814,18 +816,47 @@
         // Notification form submission
         function submitNotification(event) {
             event.preventDefault();
-            const email = event.target.querySelector('.email-input').value;
+            const form = event.target;
+            const email = form.querySelector('input[name="email"]').value;
+            const submitBtn = form.querySelector('.notify-btn');
+            const originalText = submitBtn.textContent;
             
-            // Simple validation
-            if (email && email.includes('@')) {
-                document.getElementById('success-message').style.display = 'block';
-                event.target.reset();
-                
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    document.getElementById('success-message').style.display = 'none';
-                }, 5000);
-            }
+            // 버튼 상태 변경
+            submitBtn.textContent = '전송 중...';
+            submitBtn.disabled = true;
+            
+            // FormData 생성
+            const formData = new FormData(form);
+            
+            // Fetch API로 폼 전송
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('success-message').style.display = 'block';
+                    form.reset();
+                    
+                    // 성공 메시지 5초 후 숨김
+                    setTimeout(() => {
+                        document.getElementById('success-message').style.display = 'none';
+                    }, 5000);
+                } else {
+                    throw new Error('전송 실패');
+                }
+            })
+            .catch(error => {
+                alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
+            })
+            .finally(() => {
+                // 버튼 상태 복원
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
         }
 
         // Intersection Observer for animations
