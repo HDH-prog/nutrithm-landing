@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뉴트리듬 - 생체리듬 기반 스마트 식단 관리</title>
     <meta name="description" content="단순한 칼로리 계산을 넘어선 생체리듬 기반 영양 관리. AI와 개인 맞춤형 분석으로 건강한 다이어트를 시작하세요.">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BPC99M76MM');
+    </script>
     <style>
         * {
             margin: 0;
@@ -749,7 +758,7 @@
                 <h2>건강한 변화를 시작할 준비가 되셨나요?</h2>
                 <p>뉴트리듬 앱 출시 소식을 가장 먼저 받아보세요. 얼리버드 혜택도 놓치지 마세요!</p>
                 
-                <form class="notify-form" action="https://formspree.io/f/mqaddbpq" method="POST" onsubmit="submitNotification(event)">
+                <form class="notify-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="submitNotification(event)">
                     <input type="email" name="email" class="email-input" placeholder="이메일 주소를 입력하세요" required>
                     <input type="hidden" name="_subject" value="뉴트리듬 출시 알림 신청">
                     <input type="hidden" name="_next" value="">
@@ -813,7 +822,7 @@
             `;
         }
 
-        // Notification form submission
+        // Notification form submission with Analytics tracking
         function submitNotification(event) {
             event.preventDefault();
             const form = event.target;
@@ -838,6 +847,15 @@
             })
             .then(response => {
                 if (response.ok) {
+                    // Google Analytics 이벤트 추적
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'email_signup', {
+                            'event_category': 'engagement',
+                            'event_label': 'landing_page_notification',
+                            'value': 1
+                        });
+                    }
+                    
                     document.getElementById('success-message').style.display = 'block';
                     form.reset();
                     
